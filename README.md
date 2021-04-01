@@ -1,6 +1,6 @@
 # Oekaki(仮称)
 
-[Github Pages](https://ixactly.github.io/oekaki)
+[Github Pages](https://ixactly.github.io/oekaki/)
 
 
 ## 使い方
