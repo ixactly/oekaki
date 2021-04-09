@@ -215,7 +215,7 @@ let pre_render_data = null;
 
 const onmessage_main = (render_data) => {
   if (!opencv_loaded) return
-  if(pre_render_data ==null) pre_render_data = render_data
+  if (pre_render_data == null) pre_render_data = render_data
 
 
   canvas_height = render_data.height
@@ -230,7 +230,10 @@ const onmessage_main = (render_data) => {
       const isRightHand = render_data.isRightHand[index]
       const landmarks = render_data.landmarks[index];
 
-      const p = new cv.Point(landmarks[8].x * canvas_width, landmarks[8].y * canvas_height);
+      const [x, y, z] = landmarks.landmarks[8];
+      console.log("send");
+      console.log(x);
+      const p = new cv.Point(x * canvas_width, y * canvas_height);
       const hand_i = isRightHand ? 0 : 1;
 
       let now_line = lines[hand_i][lines[hand_i].length - 1]

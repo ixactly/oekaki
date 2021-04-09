@@ -1,4 +1,4 @@
-import {freelizer} from 'https://cdn.jsdelivr.net/npm/freelizer@1.0.0/index.min.js'
+import { freelizer } from 'https://cdn.jsdelivr.net/npm/freelizer@1.0.0/index.min.js'
 
 const MAX_NUM_HANDS = 2;
 const MIC_THRESHOLD = 0.01
@@ -12,13 +12,16 @@ const loudnessElement = document.getElementById("loudness")
 
 // 設定パラメータ
 let line_thickness = 10; // 線の太さ
-let line_color = [255,255,255,255]; //RGBA
+let line_color = [255, 255, 255, 255]; //RGBA
 let line_on = false; // ペン/消しゴム の線を描画するかどうか
 let erase_mode = false; // ペンを使うか消しゴムを使うか
 
 let back_button_cnt = 0
 let forward_button_cnt = 0
 let clear_flag = false
+
+let VIDEO_WIDTH = 1280;
+let VIDEO_HEIGHT = 720;
 
 // Optimization: Turn off animated spinner after its hiding animation is done.
 const spinner = document.querySelector('.loading');
@@ -45,7 +48,7 @@ const audio_init = async () => {
   wavedata = new Float32Array(analyser.fftSize);
   analyser.fftSize = 512;
   // analyser.connect(audioCtx.destination)
-  const mic_stream = await navigator.mediaDevices.getUserMedia({audio: true});
+  const mic_stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   const mic_input = audioCtx.createMediaStreamSource(mic_stream);
   mic_input.connect(analyser);
 }
@@ -81,7 +84,7 @@ const audio_data_update = (data) => {
 
   ; (async () => {
     try {
-      const {start, stop, subscribe, unsubscribe} = await freelizer()
+      const { start, stop, subscribe, unsubscribe } = await freelizer()
       start()
       subscribe(audio_data_update)
     } catch (error) {
@@ -107,7 +110,7 @@ const audio_data_update = (data) => {
 // };
 
 let render_worker = null;
-let camera_img_from_mediapipe = null;
+let video = null;
 
 
 let oekaki_img = null;
@@ -117,10 +120,10 @@ if (window.Worker) {
   render_worker.onmessage = (e) => {
     oekaki_img = e.data.img;
     render_loop_cnt = e.data.loop_cnt;
-    if(e.data.draw){
+    if (e.data.draw) {
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      canvasCtx.drawImage(camera_img_from_mediapipe, 0, 0, canvasElement.width, canvasElement.height);
+      canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
       canvasCtx.putImageData(oekaki_img, 0, 0)
       canvasCtx.restore();
     }
@@ -137,7 +140,7 @@ class fpsCheck {
     this.fps = -1
     //500ms
     this.update_period = 500;
-    this.callback = callback
+    this.callback = callback;
   }
   _update() {
     this.fps = this.counter / (this.update_period / 1000)
@@ -169,8 +172,9 @@ fpsch.start();
 
 let loop_cnt = 0;
 let render_loop_cnt = 0;
-let onresults_first = true
-const onResults = (results) => {
+let onresults_first = true;
+
+async function main() {
   if (onresults_first) {
     // Hide the spinner.
     document.body.classList.add('loaded');
@@ -178,13 +182,33 @@ const onResults = (results) => {
   }
 
   fpsch.tick()
-  camera_img_from_mediapipe = results.image
-  const hands_found = results.multiHandLandmarks && results.multiHandedness
-  const isRightHand = hands_found ?
-    results.multiHandedness.map((classification, index, array) => {
-      return classification.label === 'Right';
-    })
-    : null;
+  let video;
+  try {
+    video = await loadVideo();
+  } catch (e) {
+    let info = document.getElementById('info');
+    info.textContent = e.message;
+    info.style.display = 'block';
+    throw e;
+  }
+  let hands_found;
+  const model = await handpose.load();
+  const predictions = await model.estimateHands(video);
+  if (predictions.length > 0) {
+    hands_found = true;
+    for (let i = 0; i < predictions.length; i++) {
+      const keypoints = predictions[i].landmarks; // No.8 is index_finger_tip
+
+      // Log hand keypoints.
+      const [x, y, z] = keypoints[8];
+      console.log(`index_finger_tip: [${x}, ${y}, ${z}]`);
+    }
+  }
+  else {
+    hands_found = false;
+  }
+  let isRightHand = true;
+
   loop_cnt++;
   let draw = (loop_cnt <= render_loop_cnt + 2);
   const render_data = {
@@ -192,7 +216,7 @@ const onResults = (results) => {
     audio_data: audio_data,
     hands_found: hands_found,
     isRightHand: isRightHand,
-    landmarks: hands_found ? results.multiHandLandmarks : null,
+    landmarks: hands_found ? predictions : null, // will be changed
     height: canvasElement.height,
     width: canvasElement.width,
     back_button_cnt: back_button_cnt,
@@ -201,44 +225,50 @@ const onResults = (results) => {
     line_on: line_on,
     erase_mode: erase_mode,
     line_thickness: line_thickness,
-    line_color:line_color,
+    line_color: line_color,
     loop_cnt: loop_cnt,
-    draw:  draw//render_loop_cntが過度に遅れてる場合は描画をせずに点の記録に留める
+    draw: draw//render_loop_cntが過度に遅れてる場合は描画をせずに点の記録に留める
   }
   render_worker.postMessage(render_data);
   back_button_cnt = 0
   forward_button_cnt = 0
   clear_flag = false
-// document.getElementById("pen_mode").value == "eraser"
+  // document.getElementById("pen_mode").value == "eraser"
+  requestAnimationFrame(main);
 }
-
-const hands = new Hands({
-  locateFile: (file) => {
-    // return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.1/${file}`;
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.1.1612238212/${file}`;
-  }
-})
-
-const options = {
-  maxNumHands: MAX_NUM_HANDS,
-  minDetectionConfidence: 0.7,
-  minTrackingConfidence: 0.7
-}
-
-hands.setOptions(options);
-hands.onResults(onResults);
 
 /**
  * Instantiate a camera. We'll feed each frame we receive into the solution.
  */
-const camera = new Camera(videoElement, {
-  onFrame: async () => {
-    await hands.send({image: videoElement});
-  },
-  width: 1280,
-  height: 720
-});
-camera.start();
+async function setupCamera() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    throw new Error(
+      'Browser API navigator.mediaDevices.getUserMedia not available');
+  }
+
+  const stream = await navigator.mediaDevices.getUserMedia({
+    'audio': false,
+    'video': {
+      facingMode: 'user',
+      // Only setting the video to a specified size in order to accommodate a
+      // point cloud, so on mobile devices accept the default size.
+      width: VIDEO_WIDTH,
+      height: VIDEO_HEIGHT
+    },
+  });
+  videoElement.srcObject = stream;
+  return new Promise((resolve) => {
+    videoElement.onloadedmetadata = () => {
+      resolve(videoElement);
+    };
+  });
+}
+
+async function loadVideo() {
+  const video = await setupCamera();
+  video.play();
+  return video;
+}
 
 const save_paint = () => {
 
@@ -315,108 +345,108 @@ recognition.continuous = true;
 let times = 0;
 
 recognition.addEventListener('result', function (event) {
-    console.log(event.results);
-    
-    let text = event.results[times][0].transcript;
-    elmResult.value = text;
-    
-    const shineButton = (id) => {
-      document.getElementById(id).style.backgroundColor = '#ffc0cb';
-      setTimeout(()=>{
-        document.getElementById(id).style.backgroundColor = '#ff00ff';
-      }, 2000);
-    }
+  console.log(event.results);
 
-    switch(text){
+  let text = event.results[times][0].transcript;
+  elmResult.value = text;
 
-      case '鉛筆':
-        erase_mode = false;
-        line_on = true;
-        document.getElementById("pen").click();
-        times++;
-        break;
-      case '消しゴム':
-        erase_mode = true;
-        line_on = true;
-        document.getElementById("eraser").click();
-        times++;
-        break;
-      case 'なし':
-        line_on = false; //一度 line_on = falseにすると動かなくなってしまう
-        times++;
-        break;
-      case '太い':
-        line_thickness = 15;
-        times++;
-        break;
-      case '細い':
-        line_thickness = 5;
-        times++;
-        break;
-      case '普通':
-        line_thickness = 10;
-        times++;
-        break;
-      case '赤':
-        line_color = [255,0,0,255];
-        times++;
-        break;
-      case 'オレンジ':
-        line_color = [255,165,0,255];
-        times++;
-        break;
-      case '黄色':
-        line_color = [255,255,0,255];
-        times++;
-        break;
-      case '緑':
-        line_color = [0,128,0,255];
-        times++;
-        break;
-      case '水色':
-        line_color = [0,255,255,255];
-        times++;
-        break;
-      case '青':
-        line_color = [0,0,255,255];
-        times++;
-        break;
-      case '紫':
-        line_color = [128,0,128,255];
-        times++;
-        break;
-      case '白':
-        line_color = [255,255,255,255];
-        times++;
-        break;
-      case '黒':
-        line_color = [0,0,0,255];
-        times++;
-        break;
-        case '保存する':
-        save_paint();
-        shineButton('save_button');
-        times++;
-        break;
-      case '勧める':
-        forward_button_cnt += 1;
-        shineButton('forward_button');
-        times++;
-        break;
-      case '戻す':
-        back_button_cnt += 1;
-        shineButton('back_button');
-        times++;
-        break;
-      case '全部消す':
-        clear_flag = true;
-        shineButton('clear_button');
-        times++;
-        break;
-      default:
-        times++;
-        break;
-    }
+  const shineButton = (id) => {
+    document.getElementById(id).style.backgroundColor = '#ffc0cb';
+    setTimeout(() => {
+      document.getElementById(id).style.backgroundColor = '#ff00ff';
+    }, 2000);
+  }
+
+  switch (text) {
+
+    case '鉛筆':
+      erase_mode = false;
+      line_on = true;
+      document.getElementById("pen").click();
+      times++;
+      break;
+    case '消しゴム':
+      erase_mode = true;
+      line_on = true;
+      document.getElementById("eraser").click();
+      times++;
+      break;
+    case 'なし':
+      line_on = false; //一度 line_on = falseにすると動かなくなってしまう
+      times++;
+      break;
+    case '太い':
+      line_thickness = 15;
+      times++;
+      break;
+    case '細い':
+      line_thickness = 5;
+      times++;
+      break;
+    case '普通':
+      line_thickness = 10;
+      times++;
+      break;
+    case '赤':
+      line_color = [255, 0, 0, 255];
+      times++;
+      break;
+    case 'オレンジ':
+      line_color = [255, 165, 0, 255];
+      times++;
+      break;
+    case '黄色':
+      line_color = [255, 255, 0, 255];
+      times++;
+      break;
+    case '緑':
+      line_color = [0, 128, 0, 255];
+      times++;
+      break;
+    case '水色':
+      line_color = [0, 255, 255, 255];
+      times++;
+      break;
+    case '青':
+      line_color = [0, 0, 255, 255];
+      times++;
+      break;
+    case '紫':
+      line_color = [128, 0, 128, 255];
+      times++;
+      break;
+    case '白':
+      line_color = [255, 255, 255, 255];
+      times++;
+      break;
+    case '黒':
+      line_color = [0, 0, 0, 255];
+      times++;
+      break;
+    case '保存する':
+      save_paint();
+      shineButton('save_button');
+      times++;
+      break;
+    case '勧める':
+      forward_button_cnt += 1;
+      shineButton('forward_button');
+      times++;
+      break;
+    case '戻す':
+      back_button_cnt += 1;
+      shineButton('back_button');
+      times++;
+      break;
+    case '全部消す':
+      clear_flag = true;
+      shineButton('clear_button');
+      times++;
+      break;
+    default:
+      times++;
+      break;
+  }
 }, false);
 
 
@@ -435,3 +465,4 @@ elmEnd.addEventListener('click', function () {
     recognition.stop();
 }, false);
 */
+main();
