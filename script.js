@@ -193,6 +193,7 @@ async function main() {
   }
 
   model = await handpose.load();
+  console.log(model);
 
   // document.getElementById("pen_mode").value == "eraser"
   landmarker(video);
@@ -222,7 +223,6 @@ const landmarker = async (video) => {
         const keypoints = predictions[i].landmarks; // No.8 is index_finger_tip
 
         // Log hand keypoints.
-        const [x, y, z] = keypoints[8];
       }
     }
     else {
@@ -250,6 +250,7 @@ const landmarker = async (video) => {
       loop_cnt: loop_cnt,
       draw: draw//render_loop_cntが過度に遅れてる場合は描画をせずに点の記録に留める
     }
+    console.log(draw);
     render_worker.postMessage(render_data);
     back_button_cnt = 0
     forward_button_cnt = 0

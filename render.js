@@ -217,7 +217,6 @@ const onmessage_main = (render_data) => {
   if (!opencv_loaded) return
   if (pre_render_data == null) pre_render_data = render_data
 
-
   canvas_height = render_data.height
   canvas_width = render_data.width
   if (img_his == null) {
@@ -231,7 +230,8 @@ const onmessage_main = (render_data) => {
       const landmarks = render_data.landmarks[index];
 
       const [x, y, z] = landmarks.landmarks[8];
-      const p = new cv.Point(x * canvas_width, y * canvas_height);
+      console.log(x * canvas_width);
+      const p = new cv.Point(x, y);
       const hand_i = isRightHand ? 0 : 1;
 
       let now_line = lines[hand_i][lines[hand_i].length - 1]
@@ -322,6 +322,7 @@ const onmessage_main = (render_data) => {
 
     hand_points.forEach((p) => {
       cv.circle(result_img, p, 5, new cv.Scalar(255, 0, 0, 255), 5);
+      console.log('draw circle');
     })
 
     let send_img = get_new_img()
