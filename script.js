@@ -174,6 +174,7 @@ let loop_cnt = 0;
 let render_loop_cnt = 0;
 let onresults_first = true;
 
+let model;
 async function main() {
   if (onresults_first) {
     // Hide the spinner.
@@ -181,7 +182,6 @@ async function main() {
     onresults_first = false
   }
 
-  fpsch.tick()
   let video;
   try {
     video = await loadVideo();
@@ -191,52 +191,73 @@ async function main() {
     info.style.display = 'block';
     throw e;
   }
-  let hands_found;
-  const model = await handpose.load();
-  const predictions = await model.estimateHands(video);
-  if (predictions.length > 0) {
-    hands_found = true;
-    for (let i = 0; i < predictions.length; i++) {
-      const keypoints = predictions[i].landmarks; // No.8 is index_finger_tip
+
+  model = await handpose.load();
+
+  // document.getElementById("pen_mode").value == "eraser"
+  landmarker(video);
+}
+
+const landmarker = async (video) => {
+  async function frameLandmarks() {
+    /*
+    ctx.drawImage(video, 0, 0, videoWidth, videoHeight, 0, 0, canvas.width, canvas.height);
+    const predictions = await model.estimateHands(video);
+    
+    if (predictions.length > 0) {
+      const keypoints = predictions[0].landmarks; // No.8 is index_finger_tip
 
       // Log hand keypoints.
       const [x, y, z] = keypoints[8];
       console.log(`index_finger_tip: [${x}, ${y}, ${z}]`);
+
     }
-  }
-  else {
-    hands_found = false;
-  }
-  let isRightHand = true;
+    */
+    fpsch.tick()
+    let hands_found;
+    const predictions = await model.estimateHands(video);
+    if (predictions.length > 0) {
+      hands_found = true;
+      for (let i = 0; i < predictions.length; i++) {
+        const keypoints = predictions[i].landmarks; // No.8 is index_finger_tip
 
-  loop_cnt++;
-  let draw = (loop_cnt <= render_loop_cnt + 2);
-  const render_data = {
-    msg: "main",
-    audio_data: audio_data,
-    hands_found: hands_found,
-    isRightHand: isRightHand,
-    landmarks: hands_found ? predictions : null, // will be changed
-    height: canvasElement.height,
-    width: canvasElement.width,
-    back_button_cnt: back_button_cnt,
-    forward_button_cnt: forward_button_cnt,
-    clear_flag: clear_flag,
-    line_on: line_on,
-    erase_mode: erase_mode,
-    line_thickness: line_thickness,
-    line_color: line_color,
-    loop_cnt: loop_cnt,
-    draw: draw//render_loop_cntが過度に遅れてる場合は描画をせずに点の記録に留める
-  }
-  render_worker.postMessage(render_data);
-  back_button_cnt = 0
-  forward_button_cnt = 0
-  clear_flag = false
-  // document.getElementById("pen_mode").value == "eraser"
-  requestAnimationFrame(main);
-}
+        // Log hand keypoints.
+        const [x, y, z] = keypoints[8];
+      }
+    }
+    else {
+      hands_found = false;
+    }
 
+    let isRightHand = true;
+    loop_cnt++;
+    let draw = (loop_cnt <= render_loop_cnt + 2);
+    const render_data = {
+      msg: "main",
+      audio_data: audio_data,
+      hands_found: hands_found,
+      isRightHand: isRightHand,
+      landmarks: hands_found ? predictions : null, // will be changed
+      height: canvasElement.height,
+      width: canvasElement.width,
+      back_button_cnt: back_button_cnt,
+      forward_button_cnt: forward_button_cnt,
+      clear_flag: clear_flag,
+      line_on: line_on,
+      erase_mode: erase_mode,
+      line_thickness: line_thickness,
+      line_color: line_color,
+      loop_cnt: loop_cnt,
+      draw: draw//render_loop_cntが過度に遅れてる場合は描画をせずに点の記録に留める
+    }
+    render_worker.postMessage(render_data);
+    back_button_cnt = 0
+    forward_button_cnt = 0
+    clear_flag = false
+    requestAnimationFrame(frameLandmarks);
+  };
+  frameLandmarks();
+};
 /**
  * Instantiate a camera. We'll feed each frame we receive into the solution.
  */

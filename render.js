@@ -231,8 +231,6 @@ const onmessage_main = (render_data) => {
       const landmarks = render_data.landmarks[index];
 
       const [x, y, z] = landmarks.landmarks[8];
-      console.log("send");
-      console.log(x);
       const p = new cv.Point(x * canvas_width, y * canvas_height);
       const hand_i = isRightHand ? 0 : 1;
 
