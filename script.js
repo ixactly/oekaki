@@ -1,4 +1,4 @@
-import { freelizer } from 'https://cdn.jsdelivr.net/npm/freelizer@1.0.0/index.min.js'
+// import { freelizer } from 'https://cdn.jsdelivr.net/npm/freelizer@1.0.0/index.min.js'
 
 const MAX_NUM_HANDS = 2;
 const MIC_THRESHOLD = 0.01
@@ -35,6 +35,7 @@ let audio_data = {
   color_index: 0
 }
 
+/*
 
 let audioCtx = null
 let wavedata = null
@@ -58,11 +59,15 @@ const audio_init = async () => {
   mic_input.connect(analyser);
 }
 
+*/
+
+/*
 window.onload = async () => {
   audio_init()
 }
-
-let on_pre = false
+*/
+let on_pre = false;
+/*
 const audio_data_update = (data) => {
   // data例
   //{
@@ -96,6 +101,7 @@ const audio_data_update = (data) => {
       console.error(error);
     }
   })()
+*/
 
 // // local fileを対象にworkerを起動すると出るエラーのための対処
 // // https://tshino.hatenablog.com/entry/20180106/1515218776
@@ -327,12 +333,16 @@ document.getElementById("eraser").onclick = () => {
   document.getElementById("eraser").classList.add("valid");
   document.getElementById("pen").classList.remove("valid");
   document.getElementById("pen").classList.add("invalid");
+  erase_mode = true;
+  line_on = true;
 }
 document.getElementById("pen").onclick = () => {
   document.getElementById("pen").classList.remove("invalid");
   document.getElementById("pen").classList.add("valid");
   document.getElementById("eraser").classList.remove("valid");
   document.getElementById("eraser").classList.add("invalid");
+  erase_mode = false;
+  line_on = true;
 }
 document.getElementById("clear_button").onclick = () => {
   clear_flag = true;
@@ -340,9 +350,11 @@ document.getElementById("clear_button").onclick = () => {
 
 document.getElementById("fullOverlay").onclick = async () => {
   document.getElementById("fullOverlay").remove()
+  /*
   await audioCtx.resume()
   await audio_init()
   console.log("audio context is resumed")
+  */
   // console.log("audio_init() is called")
 }
 // let susresBtn = document.getElementById("susresBtn")
@@ -360,6 +372,7 @@ document.getElementById("fullOverlay").onclick = async () => {
 // }
 main();
 
+/*
 // 音声認識
 var recognition = new webkitSpeechRecognition();
 var elmStart = document.getElementById('recognitionStart');
@@ -481,6 +494,7 @@ window.addEventListener('DOMContentLoaded', () => {
   elmResult.value = '';
   recognition.start();
 });
+*/
 
 /*
 elmStart.addEventListener('click', function () {
