@@ -39,9 +39,15 @@ let audio_data = {
 let audioCtx = null
 let wavedata = null
 let analyser = null
-let AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
+var AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || false;
+
 const audio_init = async () => {
-  audioCtx = new AudioContext();
+  if (AudioContext) {
+    audioCtx = new AudioContext();
+  } else {
+    alert("Sorry, but the Web Audio API is not supported by your browser. Please, consider upgrading to the latest version or downloading Google Chrome or Mozilla Firefox");
+  }
+
 
   analyser = audioCtx.createAnalyser();
   wavedata = new Float32Array(analyser.fftSize);
