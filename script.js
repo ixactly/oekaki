@@ -358,7 +358,7 @@ document.getElementById("fullOverlay").onclick = async () => {
 //     });
 //   }
 // }
-
+main();
 
 // 音声認識
 var recognition = new webkitSpeechRecognition();
@@ -492,4 +492,3 @@ elmEnd.addEventListener('click', function () {
     recognition.stop();
 }, false);
 */
-main();

@@ -230,7 +230,7 @@ const onmessage_main = (render_data) => {
       const landmarks = render_data.landmarks[index];
 
       const [x, y, z] = landmarks.landmarks[8];
-      console.log(x * canvas_width);
+      // console.log(x * canvas_width);
       const p = new cv.Point(x, y);
       const hand_i = isRightHand ? 0 : 1;
 
