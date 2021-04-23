@@ -39,10 +39,9 @@ let audio_data = {
 let audioCtx = null
 let wavedata = null
 let analyser = null
-
+let AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
 const audio_init = async () => {
-  audioCtx = new (window.AudioContext
-    || window.webkitAudioContext || window.mozAudioContext)();
+  audioCtx = new AudioContext();
 
   analyser = audioCtx.createAnalyser();
   wavedata = new Float32Array(analyser.fftSize);
