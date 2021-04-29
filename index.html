@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0, user-scalable=no">
     <title>精密lab 画像処理音声認識 1班</title>
     <meta charset="utf-8">
     <link rel="icon" href="favicon.ico">
@@ -61,8 +62,8 @@
 
         <!-- 鏡像 -->
         <video class="input_video" style="transform: scaleX(-1);"></video>
-        <canvas class="output_canvas" width="1280px" height="720px"></canvas>
-        <canvas class="output_canvas_for_save" width="1280px" height="720px"></canvas>
+        <canvas class="output_canvas"></canvas>
+        <canvas class="output_canvas_for_save"></canvas>
         <div class="loading">
             <div class="spinner"></div>
             <div class="message">
@@ -80,7 +81,6 @@
         <!-- <button id="susresBtn">toggle audio context</button>  -->
         <div id="fullOverlay">
             <div class="start_message">
-                Click to Start
             </div>
         </div>
 

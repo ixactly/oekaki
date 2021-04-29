@@ -23,6 +23,14 @@ let clear_flag = false
 let VIDEO_WIDTH = 1280;
 let VIDEO_HEIGHT = 720;
 
+function isMobile() {
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  return isAndroid || isiOS;
+};
+const mobile = isMobile();
+let videoWidth, videoHeight;
+
 // Optimization: Turn off animated spinner after its hiding animation is done.
 const spinner = document.querySelector('.loading');
 spinner.ontransitionend = () => {
@@ -202,6 +210,13 @@ async function main() {
     info.style.display = 'block';
     throw e;
   }
+  videoWidth = video.videoWidth;
+  videoHeight = video.videoHeight;
+
+  canvasElement.width = videoWidth;
+  canvasElement.height = videoHeight;
+  video.width = videoWidth;
+  video.height = videoHeight;
 
   model = await handpose.load();
   console.log(model);
@@ -285,8 +300,8 @@ async function setupCamera() {
       facingMode: 'user',
       // Only setting the video to a specified size in order to accommodate a
       // point cloud, so on mobile devices accept the default size.
-      width: VIDEO_WIDTH,
-      height: VIDEO_HEIGHT
+      width: mobile ? undefined : VIDEO_WIDTH,
+      height: mobile ? undefined : VIDEO_HEIGHT
     },
   });
   videoElement.srcObject = stream;
