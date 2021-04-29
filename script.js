@@ -142,7 +142,7 @@ if (window.Worker) {
     if (e.data.draw) {
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+      canvasCtx.drawImage(videoElement, 0, 0, videoWidth, videoHeight, 0, 0, canvasElement.width, canvasElement.height);
       canvasCtx.putImageData(oekaki_img, 0, 0)
       canvasCtx.restore();
     }
@@ -219,7 +219,6 @@ async function main() {
   video.height = videoHeight;
 
   model = await handpose.load();
-  console.log(model);
 
   // document.getElementById("pen_mode").value == "eraser"
   landmarker(video);
