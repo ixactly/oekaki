@@ -8,7 +8,7 @@ const canvasElement = document.getElementsByClassName('output_canvas')[0];
 const canvasElementForSave = document.getElementsByClassName('output_canvas_for_save')[0];
 const canvasCtx = canvasElement.getContext('2d');
 const loudnessElement = document.getElementById("loudness")
-
+const containerElement = document.getElementsByClassName('container')[0];
 
 // 設定パラメータ
 let line_thickness = 10; // 線の太さ
@@ -20,8 +20,8 @@ let back_button_cnt = 0
 let forward_button_cnt = 0
 let clear_flag = false
 
-let VIDEO_WIDTH = 1280;
-let VIDEO_HEIGHT = 720;
+let VIDEO_WIDTH = 640;
+let VIDEO_HEIGHT = 360;
 
 function isMobile() {
   const isAndroid = /Android/i.test(navigator.userAgent);
@@ -133,24 +133,7 @@ let video = null;
 
 
 let oekaki_img = null;
-if (window.Worker) {
-  render_worker = new Worker("render.js")
 
-  render_worker.onmessage = (e) => {
-    oekaki_img = e.data.img;
-    render_loop_cnt = e.data.loop_cnt;
-    if (e.data.draw) {
-      canvasCtx.save();
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      canvasCtx.drawImage(videoElement, 0, 0, videoWidth, videoHeight, 0, 0, canvasElement.width, canvasElement.height);
-      canvasCtx.putImageData(oekaki_img, 0, 0)
-      canvasCtx.restore();
-    }
-  }
-
-} else {
-  console.err("can't find window.Worker.");
-}
 //0.5秒ごとにfpsを計算して値を更新する
 class fpsCheck {
   constructor(callback = null) {
@@ -202,14 +185,9 @@ async function main() {
   }
 
   let video;
-  try {
-    video = await loadVideo();
-  } catch (e) {
-    let info = document.getElementById('info');
-    info.textContent = e.message;
-    info.style.display = 'block';
-    throw e;
-  }
+  video = await loadVideo();
+
+
   videoWidth = video.videoWidth;
   videoHeight = video.videoHeight;
 
@@ -217,6 +195,28 @@ async function main() {
   canvasElement.height = videoHeight;
   video.width = videoWidth;
   video.height = videoHeight;
+
+  containerElement.style.width = videoWidth;
+  containerElement.style.height = videoHeight;
+
+  if (window.Worker) {
+    render_worker = new Worker("render.js")
+
+    render_worker.onmessage = (e) => {
+      oekaki_img = e.data.img;
+      render_loop_cnt = e.data.loop_cnt;
+      if (e.data.draw) {
+        canvasCtx.save();
+        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        canvasCtx.putImageData(oekaki_img, 0, 0)
+        canvasCtx.restore();
+        landmarker(video);
+      }
+    }
+
+  } else {
+    console.err("can't find window.Worker.");
+  }
 
   model = await handpose.load();
 
@@ -226,19 +226,7 @@ async function main() {
 
 const landmarker = async (video) => {
   async function frameLandmarks() {
-    /*
-    ctx.drawImage(video, 0, 0, videoWidth, videoHeight, 0, 0, canvas.width, canvas.height);
-    const predictions = await model.estimateHands(video);
-    
-    if (predictions.length > 0) {
-      const keypoints = predictions[0].landmarks; // No.8 is index_finger_tip
 
-      // Log hand keypoints.
-      const [x, y, z] = keypoints[8];
-      console.log(`index_finger_tip: [${x}, ${y}, ${z}]`);
-
-    }
-    */
     fpsch.tick()
     let hands_found;
     const predictions = await model.estimateHands(video);
@@ -275,12 +263,10 @@ const landmarker = async (video) => {
       loop_cnt: loop_cnt,
       draw: draw//render_loop_cntが過度に遅れてる場合は描画をせずに点の記録に留める
     }
-    console.log(draw);
     render_worker.postMessage(render_data);
     back_button_cnt = 0
     forward_button_cnt = 0
     clear_flag = false
-    requestAnimationFrame(frameLandmarks);
   };
   frameLandmarks();
 };
