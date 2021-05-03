@@ -33,7 +33,7 @@ body {
 
 .container {
   position: absolute;
-  background:rgba(0, 0, 0, 0);
+  background-color: #596e73;
 }
 
 .input_video {
