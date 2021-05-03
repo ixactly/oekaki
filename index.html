@@ -61,20 +61,8 @@
     <div class="container">
 
         <!-- 鏡像 -->
-        <video class="input_video" playsinline style="
-        -webkit-transform: scaleX(-1);
-        transform: scaleX(-1);
-        width: auto;
-        height: auto;
-        position: fixed;
-        ">
-        </video>
-        <canvas class="output_canvas" style="
-        width: auto;
-        height: auto;
-        position: fixed;
-        ">
-        </canvas>
+        <video class="input_video" style="transform: scaleX(-1);"></video>
+        <canvas class="output_canvas"></canvas>
         <canvas class="output_canvas_for_save"></canvas>
 
         <!-- <select id="pen_mode"> -->
@@ -83,6 +71,8 @@
         <!-- </select> -->
         <span id="fps_display">0 fps</span>
         <span id="loudness">0 </span>
+
+        <!-- <button id="susresBtn">toggle audio context</button>  -->
 
     </div>
     <div id="buttonBar1" class="buttonBar">
