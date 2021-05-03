@@ -61,15 +61,21 @@
     <div class="container">
 
         <!-- 鏡像 -->
-        <video class="input_video" style="transform: scaleX(-1);"></video>
-        <canvas class="output_canvas"></canvas>
+        <video class="input_video" playsinline style="
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+        width: auto;
+        height: auto;
+        position: fixed;
+        ">
+        </video>
+        <canvas class="output_canvas" style="
+        width: auto;
+        height: auto;
+        position: fixed;
+        ">
+        </canvas>
         <canvas class="output_canvas_for_save"></canvas>
-        <div class="loading">
-            <div class="spinner"></div>
-            <div class="message">
-                Loading
-            </div>
-        </div>
 
         <!-- <select id="pen_mode"> -->
         <!--     <option value="pen">ペン</option> -->
@@ -78,11 +84,6 @@
         <span id="fps_display">0 fps</span>
         <span id="loudness">0 </span>
 
-        <!-- <button id="susresBtn">toggle audio context</button>  -->
-        <div id="fullOverlay">
-            <div class="start_message">
-            </div>
-        </div>
     </div>
     <div id="buttonBar1" class="buttonBar">
         <!-- <select id="pen_mode"> 

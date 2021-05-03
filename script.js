@@ -32,10 +32,12 @@ const mobile = isMobile();
 let videoWidth, videoHeight;
 
 // Optimization: Turn off animated spinner after its hiding animation is done.
+/*
 const spinner = document.querySelector('.loading');
 spinner.ontransitionend = () => {
   spinner.style.display = 'none';
 };
+*/
 
 let audio_data = {
   on: true,
@@ -178,11 +180,13 @@ let onresults_first = true;
 
 let model;
 async function main() {
+  /*
   if (onresults_first) {
     // Hide the spinner.
     document.body.classList.add('loaded');
     onresults_first = false
   }
+  */
 
   let video;
   video = await loadVideo();
@@ -346,15 +350,6 @@ document.getElementById("clear_button").onclick = () => {
   clear_flag = true;
 }
 
-document.getElementById("fullOverlay").onclick = async () => {
-  document.getElementById("fullOverlay").remove()
-  /*
-  await audioCtx.resume()
-  await audio_init()
-  console.log("audio context is resumed")
-  */
-  // console.log("audio_init() is called")
-}
 // let susresBtn = document.getElementById("susresBtn")
 
 // susresBtn.onclick = function() {
