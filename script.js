@@ -187,10 +187,8 @@ async function main() {
   let video;
   video = await loadVideo();
 
-
   videoWidth = video.videoWidth;
   videoHeight = video.videoHeight;
-
   canvasElement.width = videoWidth;
   canvasElement.height = videoHeight;
   video.width = videoWidth;
