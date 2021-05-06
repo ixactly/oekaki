@@ -350,6 +350,33 @@ document.getElementById("clear_button").onclick = () => {
   clear_flag = true;
 }
 
+document.getElementById("color").onchange = () => {
+  const str = document.getElementById("color").value;
+  switch (str) {
+    case 'red':
+      line_color = [255, 0, 0, 255];
+      break;
+    case 'orange':
+      line_color = [255, 165, 0, 255];
+      break;
+    case 'yellow':
+      line_color = [255, 255, 0, 255];
+      break;
+    case 'green':
+      line_color = [0, 128, 0, 255];
+      break;
+    case 'blue':
+      line_color = [0, 0, 255, 255];
+      break;
+    case 'white':
+      line_color = [255, 255, 255, 255];
+      break;
+    case 'trans':
+      line_color = [255, 255, 255, 0];
+      break;
+  }
+}
+
 // let susresBtn = document.getElementById("susresBtn")
 
 // susresBtn.onclick = function() {
