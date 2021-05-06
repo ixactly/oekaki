@@ -102,11 +102,6 @@ body {
 #buttonBar2 {
   top: 50px;
 }
-#color {
-  top: 100px;
-  position: absolute;
-  z-index: 5;
-}
 /*
 #clear_button{
   position: absolute;

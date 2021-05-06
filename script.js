@@ -326,26 +326,42 @@ document.getElementById("forward_button").onclick = () => {
   forward_button_cnt += 1;
 }
 
-document.getElementById("save_button").onclick = () => {
-  save_paint()
-}
-
 document.getElementById("eraser").onclick = () => {
-  document.getElementById("eraser").classList.remove("invalid");
-  document.getElementById("eraser").classList.add("valid");
+  if (document.getElementById("eraser").classList.contains("valid")) {
+    document.getElementById("eraser").classList.remove("valid");
+    document.getElementById("eraser").classList.add("invalid");
+    erase_mode = false;
+    line_on = false;
+  }
+  else {
+    document.getElementById("eraser").classList.remove("invalid");
+    document.getElementById("eraser").classList.add("valid");
+    erase_mode = true;
+    line_on = true;
+  }
   document.getElementById("pen").classList.remove("valid");
   document.getElementById("pen").classList.add("invalid");
-  erase_mode = true;
-  line_on = true;
 }
+
 document.getElementById("pen").onclick = () => {
-  document.getElementById("pen").classList.remove("invalid");
-  document.getElementById("pen").classList.add("valid");
+  if (document.getElementById("pen").classList.contains("valid")) {
+    document.getElementById("pen").classList.remove("valid");
+    document.getElementById("pen").classList.add("invalid");
+    erase_mode = false;
+    line_on = false;
+  }
+  else {
+    document.getElementById("pen").classList.add("valid");
+    document.getElementById("pen").classList.remove("invalid");
+    erase_mode = false;
+    line_on = true;
+  }
+
   document.getElementById("eraser").classList.remove("valid");
   document.getElementById("eraser").classList.add("invalid");
-  erase_mode = false;
-  line_on = true;
+
 }
+
 document.getElementById("clear_button").onclick = () => {
   clear_flag = true;
 }

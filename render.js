@@ -322,7 +322,6 @@ const onmessage_main = (render_data) => {
 
     hand_points.forEach((p) => {
       cv.circle(result_img, p, 5, new cv.Scalar(255, 0, 0, 255), 5);
-      console.log('draw circle');
     })
 
     let send_img = get_new_img()
