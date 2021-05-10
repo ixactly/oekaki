@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0, user-scalable=no">
-    <title>精密lab 画像処理音声認識 1班</title>
+    <title>精密Lab.おえかきひろば</title>
     <meta charset="utf-8">
     <link rel="icon" href="favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -70,12 +70,20 @@
         </canvas>
         <canvas class="output_canvas_for_save"></canvas>
 
+        <!-- <button id="susresBtn">toggle audio context</button>  -->
+        <div id="fullOverlay">
+            <div class="start_message">
+                クリックしてはじめる
+            </div>
+        </div>
+
         <!-- <select id="pen_mode"> -->
         <!--     <option value="pen">ペン</option> -->
         <!--     <option value="eraser">消しゴム</option> -->
         <!-- </select> -->
-        <span id="fps_display">0 fps</span>
-        <span id="loudness">0 </span>
+
+        <!-- <span id="fps_display">0 fps</span>
+        <span id="loudness">0 </span> -->
 
     </div>
     <div id="buttonBar1" class="buttonBar">
@@ -86,6 +94,7 @@
         <button id="back_button">もどる</button>
         <button id="forward_button">すすむ</button>
         <button id="clear_button">ぜんぶけす</button>
+        <button id="help_button">?</button>
     </div>
     <div id="buttonBar2" class="buttonBar">
         <button id="eraser" class="invalid">けしゴム</button>

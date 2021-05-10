@@ -183,16 +183,27 @@ button.valid:hover {
 }
 
 .start_message{
-  font-size: 100px;
+  font-size: 50px;
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 50%;  left: 50%;
   transform: translateY(-50%) translateX(-50%);
   -webkit-transform: translateY(-50%) translateX(-50%);
   user-select: none; /* CSS3 */
   -moz-user-select: none; /* Firefox */
   -webkit-user-select: none; /* Safari、Chromeなど */
 }
+
+#fullOverlay{
+  position: absolute;
+  /* left: 0; top: 0; */
+  width: 640px; height: 360px;
+  /* let VIDEO_WIDTH = 640;
+let VIDEO_HEIGHT = 360; */
+  background: rgba(100, 100, 100, .8);
+  z-index: 3;
+}
+
+
 /*
 #recognitionStart{
   position: absolute;

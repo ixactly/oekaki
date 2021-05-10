@@ -396,6 +396,84 @@ document.getElementById("color").onchange = () => {
   }
 }
 
+
+document.getElementById("fullOverlay").onclick = async () => {
+  document.getElementById("fullOverlay").remove()
+  document.getElementById("help_button").click();
+  await audioCtx.resume()
+  await audio_init()
+  console.log("audio context is resumed")
+  // console.log("audio_init() is called")
+}
+
+
+// ヘルプ画面の表示
+document.getElementById("help_button").addEventListener("click", () => {
+
+  let helpWindow = document.createElement("div");
+  helpWindow.style.cssText = "position: absolute; height: 360px; width: 640px; z-index: 10; background-color: gray; opacity: 0.8;";
+  
+  helpWindow.innerHTML = `
+    <p style="position: absolute; top: 0; left: 70%;">↑カメラとマイクをONにしましょう！</p>
+    <h2 style="position: absolute; top: 5%; left: 80%;"><a id="windowCloser" style="text-decoration: underline; cursor: pointer;">×とじる</a></h2>
+    <h1 style="position: relative; top: 10%; text-align: center;">おえかきひろばへようこそ！</h1>
+    <div style="position: relative; top: 10%; text-align: center;">
+      <a class="helpNum">　1　</a>
+      <a class="helpNum">　2　</a>
+      <a class="helpNum">　3　</a>
+      <a class="helpNum">　4　</a>
+    </div>
+    <div id="helpContent"></div>
+  `;
+  document.body.appendChild(helpWindow);
+
+  let helpContents = [
+    `<div class="helpContents helpContents_center">
+      <p>カメラの<ruby><rb>前</rb><rt>まえ</rt></ruby>に<ruby><rb>指</rb><rt>ゆび</rt></ruby>を出すことで、カメラが指を<ruby><rb>検出</rb><rt>けんしゅつ</rt></ruby>します。</p>
+      <p><ruby><rb>両手</rb><rt>りょうて</rt></ruby>を出すと、どちらの指も<ruby><rb>検出</rb><rt>けんしゅつ</rt></ruby>します。</p>
+      <img src="png/select2.png" height="128px" width="128px">
+      <img src="png/select.png" height="128px" width="128px">
+      </div>`,
+    `<div class="helpContents helpContents_left">
+      <p><img src="png/penb.png"><span>をクリックして指を出すと絵が<ruby><rb>描</rb><rt>か</rt></ruby>けます。</span></p>
+      <p><img src="png/eraserb.png"><span>をクリックして指を出すと描いたものを<ruby><rb>消</rb><rt>け</rt></ruby>せます。</span></p>
+      <p><img src="png/color.png"><span>をクリックすると色を<ruby><rb>変</rb><rt>か</rt></ruby>えられます。</span></p>
+      </div>`,
+    `<div class="helpContents helpContents_left">
+      <p><img src="png/save.png"><span>をクリックすると描いた絵を<ruby><rb>保存</rb><rt>ほぞん</rt></ruby>できます。</span></p>
+      <p><img src="png/upload.png"><span>をクリックすると描いた絵をアップロードできます。</span></p>
+      </div>`,
+    `<div class="helpContents helpContents_center">
+      <p>声を出すとそれに<ruby><rb>反応</rb><rt>はんのう</rt></ruby>します。まずは「スタート」と言ってみよう！</p>
+    </div>`
+  ];
+
+  const helpers = document.querySelectorAll(".helpNum");
+  for(let i = 0; i < helpers.length; i++){
+    helpers[i].addEventListener("click", () => {
+      if(document.getElementById("selectedHelp")) document.getElementById("selectedHelp").removeAttribute("id");
+      document.getElementById("helpContent").innerHTML = helpContents[i];
+      helpers[i].id = "selectedHelp";
+    });
+  }
+
+  document.getElementById("windowCloser").addEventListener("click", () => {
+    helpWindow.remove();
+  });
+  document.getElementsByClassName("helpNum")[0].click();
+
+  let currentHelp = 0;
+  document.addEventListener("keydown", e => {
+    if(e.key === "ArrowRight" && currentHelp <= 7){
+      document.getElementsByClassName("helpNum")[++currentHelp].click();
+    }
+    if(e.key === "ArrowLeft" && currentHelp >= 1){
+      document.getElementsByClassName("helpNum")[--currentHelp].click();
+    }
+  });
+});
+
+
 // let susresBtn = document.getElementById("susresBtn")
 
 // susresBtn.onclick = function() {
