@@ -32,12 +32,12 @@ const mobile = isMobile();
 let videoWidth, videoHeight;
 
 // Optimization: Turn off animated spinner after its hiding animation is done.
-/*
-const spinner = document.querySelector('.loading');
-spinner.ontransitionend = () => {
-  spinner.style.display = 'none';
-};
-*/
+
+// const spinner = document.querySelector('.loading');
+// spinner.ontransitionend = () => {
+//   spinner.style.display = 'none';
+// };
+
 
 let audio_data = {
   on: true,
@@ -414,38 +414,45 @@ document.getElementById("help_button").addEventListener("click", () => {
   helpWindow.style.cssText = "position: absolute; height: 360px; width: 640px; z-index: 10; background-color: gray; opacity: 0.8;";
   
   helpWindow.innerHTML = `
-    <p style="position: absolute; top: 0; left: 70%;">↑カメラとマイクをONにしましょう！</p>
-    <h2 style="position: absolute; top: 5%; left: 80%;"><a id="windowCloser" style="text-decoration: underline; cursor: pointer;">×とじる</a></h2>
+    <h3 style="position: absolute; top: 0%; left: 80%;"><a id="windowCloser" style="text-decoration: underline; cursor: pointer;">×とじる</a></h2>
     <h1 style="position: relative; top: 10%; text-align: center;">おえかきひろばへようこそ！</h1>
-    <div style="position: relative; top: 10%; text-align: center;">
+    <div style="position: relative; top: 5%; text-align: center;">
       <a class="helpNum">　1　</a>
       <a class="helpNum">　2　</a>
       <a class="helpNum">　3　</a>
-      <a class="helpNum">　4　</a>
     </div>
     <div id="helpContent"></div>
   `;
+  // helpWindow.innerHTML = `
+  //   <p style="position: absolute; top: 0; left: 70%;">↑カメラとマイクをONにしましょう！</p>
+  //   <h2 style="position: absolute; top: 5%; left: 80%;"><a id="windowCloser" style="text-decoration: underline; cursor: pointer;">×とじる</a></h2>
+  //   <h1 style="position: relative; top: 10%; text-align: center;">おえかきひろばへようこそ！</h1>
+  //   <div style="position: relative; top: 10%; text-align: center;">
+  //     <a class="helpNum">　1　</a>
+  //     <a class="helpNum">　2　</a>
+  //     <a class="helpNum">　3　</a>
+  //     <a class="helpNum">　4　</a>
+  //   </div>
+  //   <div id="helpContent"></div>
+  // `;
   document.body.appendChild(helpWindow);
 
   let helpContents = [
     `<div class="helpContents helpContents_center">
       <p>カメラの<ruby><rb>前</rb><rt>まえ</rt></ruby>に<ruby><rb>指</rb><rt>ゆび</rt></ruby>を出すことで、カメラが指を<ruby><rb>検出</rb><rt>けんしゅつ</rt></ruby>します。</p>
       <p><ruby><rb>両手</rb><rt>りょうて</rt></ruby>を出すと、どちらの指も<ruby><rb>検出</rb><rt>けんしゅつ</rt></ruby>します。</p>
-      <img src="png/select2.png" height="128px" width="128px">
-      <img src="png/select.png" height="128px" width="128px">
-      </div>`,
-    `<div class="helpContents helpContents_left">
-      <p><img src="png/penb.png"><span>をクリックして指を出すと絵が<ruby><rb>描</rb><rt>か</rt></ruby>けます。</span></p>
-      <p><img src="png/eraserb.png"><span>をクリックして指を出すと描いたものを<ruby><rb>消</rb><rt>け</rt></ruby>せます。</span></p>
-      <p><img src="png/color.png"><span>をクリックすると色を<ruby><rb>変</rb><rt>か</rt></ruby>えられます。</span></p>
-      </div>`,
-    `<div class="helpContents helpContents_left">
-      <p><img src="png/save.png"><span>をクリックすると描いた絵を<ruby><rb>保存</rb><rt>ほぞん</rt></ruby>できます。</span></p>
-      <p><img src="png/upload.png"><span>をクリックすると描いた絵をアップロードできます。</span></p>
+      <img src="png/select2.png" height="64px" width="64px">
+      <img src="png/select.png" height="64px" width="64px">
       </div>`,
     `<div class="helpContents helpContents_center">
-      <p>声を出すとそれに<ruby><rb>反応</rb><rt>はんのう</rt></ruby>します。まずは「スタート」と言ってみよう！</p>
-    </div>`
+      <p>「ペン」をクリックすると<ruby><rb>絵</rb><rt>え</rt></ruby>がかけます。</span></p>
+      <p>「けしゴム」をクリックするとかいたものを<ruby><rb>けせます。</span></p>
+      <p>「いろをえらぶ」をクリックすると色を<ruby><rb>変</rb><rt>か</rt></ruby>えることができます。</span></p>
+      </div>`,
+    `<div class="helpContents helpContents_center">
+      <p>「アップ」をクリックすると絵をウェブサイト上にアップロードすることができます。</span></p>
+      <p>自分だけの絵を作り出そう！</span></p>
+      </div>`,
   ];
 
   const helpers = document.querySelectorAll(".helpNum");

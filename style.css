@@ -124,7 +124,7 @@ button {
   background-color: #ff00ff;
   box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
   font-size: 0.875rem;
-  min-width: 64px;
+  min-width: 40px;
   box-sizing: border-box;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 500;
@@ -134,6 +134,7 @@ button {
   text-align: center;
   text-transform: uppercase;
   transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  /* z-index: -1; */
 }
 button:hover {
   background-color: #ffc0cb;
@@ -183,6 +184,7 @@ button.valid:hover {
 }
 
 .start_message{
+  text-align: center;
   font-size: 50px;
   position: absolute;
   top: 50%;  left: 50%;
@@ -200,9 +202,67 @@ button.valid:hover {
   /* let VIDEO_WIDTH = 640;
 let VIDEO_HEIGHT = 360; */
   background: rgba(100, 100, 100, .8);
-  z-index: 3;
+  z-index: 2147483647;
 }
 
+.helpContents{
+  position: absolute;
+  top: 35%;
+  width: 100%;
+  z-index: -1;
+}
+.helpContents img{
+  vertical-align: middle;
+  margin-right: 5px;
+}
+.helpContents p{
+  font-size: 18px;
+}
+.helpContents span{
+  font-size: 18px;
+  vertical-align: middle;
+}
+.helpContents_center{
+  text-align: center;
+}
+.helpContents_left{
+  left: 100%;
+  text-align: left;
+}
+.helpNum{
+  border-radius: 5px;
+  background-color: #bebebe;
+  cursor: pointer;
+}
+#selectedHelp{
+  background-color: #ff00ff;
+}
+
+.loading {
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  align-items: center;
+  backface-visibility: hidden;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 1s;
+}
+.loading .message {
+  font-size: x-large;
+}
+.loading .spinner {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  animation: spin 1s linear infinite;
+  border: 32px solid #bebebe;
+  border-top: 32px solid #3498db;
+  border-radius: 50%;
+}
 
 /*
 #recognitionStart{
