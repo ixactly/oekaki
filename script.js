@@ -387,7 +387,10 @@ document.getElementById("color").onchange = () => {
     case 'white':
       line_color = [255, 255, 255, 255];
       break;
-    case 'trans':
+    case 'black':
+      line_color = [0, 0, 0, 255];
+      break;
+      case 'trans':
       line_color = [255, 255, 255, 0];
       break;
   }
