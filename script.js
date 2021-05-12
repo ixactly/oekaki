@@ -23,6 +23,9 @@ let clear_flag = false
 let VIDEO_WIDTH = 640;
 let VIDEO_HEIGHT = 360;
 
+let DEVICE_WIDTH = window.innerWidth;
+let DEVICE_HEIGHT = window.innerHeight;
+
 function isMobile() {
   const isAndroid = /Android/i.test(navigator.userAgent);
   const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -287,8 +290,8 @@ async function setupCamera() {
       facingMode: 'user',
       // Only setting the video to a specified size in order to accommodate a
       // point cloud, so on mobile devices accept the default size.
-      width: mobile ? undefined : VIDEO_WIDTH,
-      height: mobile ? undefined : VIDEO_HEIGHT
+      width: mobile ? DEVICE_WIDTH : VIDEO_WIDTH,
+      height: mobile ? DEVICE_HEIGHT : VIDEO_HEIGHT
     },
   });
   videoElement.srcObject = stream;
@@ -390,7 +393,7 @@ document.getElementById("color").onchange = () => {
     case 'black':
       line_color = [0, 0, 0, 255];
       break;
-      case 'trans':
+    case 'trans':
       line_color = [255, 255, 255, 0];
       break;
   }
@@ -412,7 +415,7 @@ document.getElementById("help_button").addEventListener("click", () => {
 
   let helpWindow = document.createElement("div");
   helpWindow.style.cssText = "position: absolute; height: 360px; width: 640px; z-index: 10; background-color: gray; opacity: 0.8;";
-  
+
   helpWindow.innerHTML = `
     <h3 style="position: absolute; top: 0%; left: 80%;"><a id="windowCloser" style="text-decoration: underline; cursor: pointer;">×とじる</a></h2>
     <h1 style="position: relative; top: 10%; text-align: center;">おえかきひろばへようこそ！</h1>
@@ -456,9 +459,9 @@ document.getElementById("help_button").addEventListener("click", () => {
   ];
 
   const helpers = document.querySelectorAll(".helpNum");
-  for(let i = 0; i < helpers.length; i++){
+  for (let i = 0; i < helpers.length; i++) {
     helpers[i].addEventListener("click", () => {
-      if(document.getElementById("selectedHelp")) document.getElementById("selectedHelp").removeAttribute("id");
+      if (document.getElementById("selectedHelp")) document.getElementById("selectedHelp").removeAttribute("id");
       document.getElementById("helpContent").innerHTML = helpContents[i];
       helpers[i].id = "selectedHelp";
     });
@@ -471,10 +474,10 @@ document.getElementById("help_button").addEventListener("click", () => {
 
   let currentHelp = 0;
   document.addEventListener("keydown", e => {
-    if(e.key === "ArrowRight" && currentHelp <= 7){
+    if (e.key === "ArrowRight" && currentHelp <= 7) {
       document.getElementsByClassName("helpNum")[++currentHelp].click();
     }
-    if(e.key === "ArrowLeft" && currentHelp >= 1){
+    if (e.key === "ArrowLeft" && currentHelp >= 1) {
       document.getElementsByClassName("helpNum")[--currentHelp].click();
     }
   });
