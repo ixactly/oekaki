@@ -198,6 +198,7 @@ button.valid:hover {
 #fullOverlay{
   position: absolute;
   /* left: 0; top: 0; */
+  width: 640px; height: 360px;
   /* let VIDEO_WIDTH = 640;
 let VIDEO_HEIGHT = 360; */
   background: rgba(100, 100, 100, .8);

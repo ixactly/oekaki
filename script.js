@@ -26,16 +26,6 @@ let VIDEO_HEIGHT = 360;
 let DEVICE_WIDTH = window.innerWidth;
 let DEVICE_HEIGHT = window.innerHeight;
 
-document.getElementById("fullOverlay").style.cssText = `position: absolute;
-/* left: 0; top: 0; */
-/* let VIDEO_WIDTH = 640;
-let VIDEO_HEIGHT = 360; */
-width: ${DEVICE_WIDTH}px;
-height: ${DEVICE_HEIGHT}px;
-background: rgba(100, 100, 100, .8);
-z-index: 2147483647;`;
-document.getElementById("fullOverlay").style.width = DEVICE_WIDTH;
-
 function isMobile() {
   const isAndroid = /Android/i.test(navigator.userAgent);
   const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -409,6 +399,7 @@ document.getElementById("color").onchange = () => {
   }
 }
 
+
 document.getElementById("fullOverlay").onclick = async () => {
   document.getElementById("fullOverlay").remove()
   document.getElementById("help_button").click();
@@ -423,7 +414,7 @@ document.getElementById("fullOverlay").onclick = async () => {
 document.getElementById("help_button").addEventListener("click", () => {
 
   let helpWindow = document.createElement("div");
-  helpWindow.style.cssText = `position: absolute; height: ${videoHeight}px; width: ${videoWidth}px; z-index: 10; background-color: gray; opacity: 0.8;`;
+  helpWindow.style.cssText = "position: absolute; height: 360px; width: 640px; z-index: 10; background-color: gray; opacity: 0.8;";
 
   helpWindow.innerHTML = `
     <h3 style="position: absolute; top: 0%; left: 80%;"><a id="windowCloser" style="text-decoration: underline; cursor: pointer;">×とじる</a></h2>
