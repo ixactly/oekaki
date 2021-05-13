@@ -5,7 +5,6 @@ const MIC_THRESHOLD = 0.01
 
 const videoElement = document.getElementsByClassName('input_video')[0];
 const canvasElement = document.getElementsByClassName('output_canvas')[0];
-const canvasElementForSave = document.getElementsByClassName('output_canvas_for_save')[0];
 const canvasCtx = canvasElement.getContext('2d');
 const loudnessElement = document.getElementById("loudness")
 const containerElement = document.getElementsByClassName('container')[0];
@@ -223,6 +222,8 @@ async function main() {
   videoHeight = video.videoHeight;
   canvasElement.width = videoWidth;
   canvasElement.height = videoHeight;
+  save_img_manager.canvasElementForSave.width = videoWidth;
+  save_img_manager.canvasElementForSave.height = videoHeight;
   video.width = videoWidth;
   video.height = videoHeight;
 
@@ -494,7 +495,7 @@ document.getElementById("help_button").addEventListener("click", () => {
 
   let helpWindow = document.createElement("div");
   helpWindow.style.cssText = "position: absolute; height: 100vh; width: 100vw; z-index: 10; background-color: gray; opacity: 0.8;";
-  
+
   helpWindow.innerHTML = `
     <h3 style="position: absolute; top: 0%; left: 80%;"><a id="windowCloser" style="text-decoration: underline; cursor: pointer;">×とじる</a></h2>
     <h1 style="position: relative; top: 10%; text-align: center;">おえかきひろばへようこそ！</h1>

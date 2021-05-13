@@ -63,8 +63,7 @@ body {
   position: absolute;
   /* height: 720px;
   width: 1280px; */
-  max-width: 100%;
-  max-height: 100%;
+  visibility: hidden;
   left: 0;
   top: 0;
 }
@@ -267,7 +266,23 @@ let VIDEO_HEIGHT = 360; */
   border-top: 32px solid #3498db;
   border-radius: 50%;
 }
-
+#uploadArea{
+  padding: 5px;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  height: 550px;
+  width: 660px;
+  position: absolute;
+  background-color: #bbbbbb;
+}
+#imgArea{
+  display: block;
+  border: solid 1px black;
+  margin: 5px auto;
+}
 /*
 #recognitionStart{
   position: absolute;
