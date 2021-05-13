@@ -20,8 +20,14 @@ let back_button_cnt = 0
 let forward_button_cnt = 0
 let clear_flag = false
 
-let VIDEO_WIDTH = 640;
-let VIDEO_HEIGHT = 360;
+console.log(window.innerHeight);
+console.log(window.innerWidth);
+
+const sH = window.innerHeight;
+const sW = window.innerWidth;
+
+let VIDEO_WIDTH = sW;
+let VIDEO_HEIGHT = sH;
 
 function isMobile() {
   const isAndroid = /Android/i.test(navigator.userAgent);
@@ -411,7 +417,7 @@ document.getElementById("fullOverlay").onclick = async () => {
 document.getElementById("help_button").addEventListener("click", () => {
 
   let helpWindow = document.createElement("div");
-  helpWindow.style.cssText = "position: absolute; height: 360px; width: 640px; z-index: 10; background-color: gray; opacity: 0.8;";
+  helpWindow.style.cssText = "position: absolute; height: 100vh; width: 100vw; z-index: 10; background-color: gray; opacity: 0.8;";
   
   helpWindow.innerHTML = `
     <h3 style="position: absolute; top: 0%; left: 80%;"><a id="windowCloser" style="text-decoration: underline; cursor: pointer;">×とじる</a></h2>

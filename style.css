@@ -29,6 +29,8 @@ body {
   top: 0;
   transform-origin: 0px 0px;
   overflow: hidden;
+  height: 100%;
+  width:100%;
 }
 
 .container {
@@ -37,6 +39,8 @@ body {
   top : 0;
   left : 0;
   z-index: 0;
+  width: 100%;
+  height: 100%;
 }
 .input_video {
   position: fixed;
@@ -198,7 +202,7 @@ button.valid:hover {
 #fullOverlay{
   position: absolute;
   /* left: 0; top: 0; */
-  width: 640px; height: 360px;
+  width: 100%; height: 100%;
   /* let VIDEO_WIDTH = 640;
 let VIDEO_HEIGHT = 360; */
   background: rgba(100, 100, 100, .8);
