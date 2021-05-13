@@ -19,14 +19,12 @@ let back_button_cnt = 0
 let forward_button_cnt = 0
 let clear_flag = false
 
-console.log(window.innerHeight);
-console.log(window.innerWidth);
 
 const sH = window.innerHeight;
 const sW = window.innerWidth;
 
-let VIDEO_WIDTH = sW;
 let VIDEO_HEIGHT = sH;
+let VIDEO_WIDTH = sW;
 
 function isMobile() {
   const isAndroid = /Android/i.test(navigator.userAgent);
@@ -167,38 +165,38 @@ class SaveImgManager {
 let save_img_manager = new SaveImgManager();
 let oekaki_img = null;
 
-//0.5秒ごとにfpsを計算して値を更新する
-class fpsCheck {
-  constructor(callback = null) {
-    this.counter = 0
-    this.intervalId = null;
-    this.fps = -1
-    //500ms
-    this.update_period = 500;
-    this.callback = callback;
-  }
-  _update() {
-    this.fps = this.counter / (this.update_period / 1000)
-    this.counter = 0
-    this.callback(this)
-  }
-  start() {
-    if (this.intervalId == null) {
-      //0.5sごとにupdate
-      this.intervalId = setInterval(this._update.bind(this), this.update_period);
-    }
+// //0.5秒ごとにfpsを計算して値を更新する
+// class fpsCheck {
+//   constructor(callback = null) {
+//     this.counter = 0
+//     this.intervalId = null;
+//     this.fps = -1
+//     //500ms
+//     this.update_period = 500;
+//     this.callback = callback;
+//   }
+//   _update() {
+//     this.fps = this.counter / (this.update_period / 1000)
+//     this.counter = 0
+//     this.callback(this)
+//   }
+//   start() {
+//     if (this.intervalId == null) {
+//       //0.5sごとにupdate
+//       this.intervalId = setInterval(this._update.bind(this), this.update_period);
+//     }
 
-  }
-  stop() {
-    if (!(this.intervalId == null)) {
-      clearInterval(this.intervalId);
-    }
-    this.fps = -1;
-  }
-  tick() {
-    this.counter++;
-  }
-}
+//   }
+//   stop() {
+//     if (!(this.intervalId == null)) {
+//       clearInterval(this.intervalId);
+//     }
+//     this.fps = -1;
+//   }
+//   tick() {
+//     this.counter++;
+//   }
+// }
 
 
 let loop_cnt = 0;
@@ -494,47 +492,35 @@ document.getElementById("fullOverlay").onclick = async () => {
 document.getElementById("help_button").addEventListener("click", () => {
 
   let helpWindow = document.createElement("div");
-  helpWindow.style.cssText = "position: absolute; height: 100vh; width: 100vw; z-index: 10; background-color: gray; opacity: 0.8;";
+  helpWindow.style.cssText = "position: absolute; height: 100%; width: 100%; z-index: 10; background-color: gray; opacity: 0.8;";
 
   helpWindow.innerHTML = `
     <h3 style="position: absolute; top: 0%; left: 80%;"><a id="windowCloser" style="text-decoration: underline; cursor: pointer;">×とじる</a></h2>
-    <h1 style="position: relative; top: 10%; text-align: center;">おえかきひろばへようこそ！</h1>
-    <div style="position: relative; top: 5%; text-align: center;">
+    <h3 style="position: relative; top: 10%; text-align: center; white-space: nowrap;">おえかきひろばへようこそ！</h3>
+    <div style="position: relative; top: 10%; text-align: center;">
       <a class="helpNum">　1　</a>
       <a class="helpNum">　2　</a>
       <a class="helpNum">　3　</a>
     </div>
     <div id="helpContent"></div>
   `;
-  // helpWindow.innerHTML = `
-  //   <p style="position: absolute; top: 0; left: 70%;">↑カメラとマイクをONにしましょう！</p>
-  //   <h2 style="position: absolute; top: 5%; left: 80%;"><a id="windowCloser" style="text-decoration: underline; cursor: pointer;">×とじる</a></h2>
-  //   <h1 style="position: relative; top: 10%; text-align: center;">おえかきひろばへようこそ！</h1>
-  //   <div style="position: relative; top: 10%; text-align: center;">
-  //     <a class="helpNum">　1　</a>
-  //     <a class="helpNum">　2　</a>
-  //     <a class="helpNum">　3　</a>
-  //     <a class="helpNum">　4　</a>
-  //   </div>
-  //   <div id="helpContent"></div>
-  // `;
   document.body.appendChild(helpWindow);
 
   let helpContents = [
     `<div class="helpContents helpContents_center">
-      <p>カメラの<ruby><rb>前</rb><rt>まえ</rt></ruby>に<ruby><rb>指</rb><rt>ゆび</rt></ruby>を出すことで、カメラが指を<ruby><rb>検出</rb><rt>けんしゅつ</rt></ruby>します。</p>
-      <p><ruby><rb>両手</rb><rt>りょうて</rt></ruby>を出すと、どちらの指も<ruby><rb>検出</rb><rt>けんしゅつ</rt></ruby>します。</p>
+      <p>カメラの<ruby><rb>前</rb><rt>まえ</rt></ruby>に<ruby><rb>指</rb><rt>ゆび</rt></ruby>を<ruby><rb>出</rb><rt>だ</rt></ruby>すことで<br>カメラが<ruby><rb>指</rb><rt>ゆび</rt></ruby>を<ruby><rb>検出</rb><rt>けんしゅつ</rt></ruby>します。</p>
+      <p><ruby><rb>両手</rb><rt>りょうて</rt></ruby>を<ruby><rb>出</rb><rt>だ</rt></ruby>すと<br>どちらの<ruby><rb>指</rb><rt>ゆび</rt></ruby>も<ruby><rb>検出</rb><rt>けんしゅつ</rt></ruby>します。</p>
       <img src="png/select2.png" height="64px" width="64px">
       <img src="png/select.png" height="64px" width="64px">
       </div>`,
     `<div class="helpContents helpContents_center">
-      <p>「ペン」をクリックすると<ruby><rb>絵</rb><rt>え</rt></ruby>がかけます。</span></p>
-      <p>「けしゴム」をクリックするとかいたものを<ruby><rb>けせます。</span></p>
-      <p>「いろをえらぶ」をクリックすると色を<ruby><rb>変</rb><rt>か</rt></ruby>えることができます。</span></p>
+      <p>「ペン」をクリックすると<br><ruby><rb>絵</rb><rt>え</rt></ruby>がかけます。</span></p>
+      <p>「けしゴム」をクリックすると<br>かいたものを<ruby><rb>けせます。</span></p>
+      <p>「いろをえらぶ」をクリックすると<br><ruby><rb>色</rb><rt>いろ</rt></ruby>を<ruby><rb>変</rb><rt>か</rt></ruby>えることができます。</span></p>
       </div>`,
     `<div class="helpContents helpContents_center">
-      <p>「アップ」をクリックすると絵をウェブサイト上にアップロードすることができます。</span></p>
-      <p>自分だけの絵を作り出そう！</span></p>
+      <p>「アップ」をクリックすると<br><ruby><rb>絵</rb><rt>え</rt></ruby>をウェブサイト上に<br>アップロードできます。</span></p>
+      <p>レッツチャレンジ！</span></p>
       </div>`,
   ];
 
