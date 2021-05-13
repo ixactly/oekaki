@@ -101,11 +101,11 @@ body {
 }
 #buttonBar1 {
   top: 0;
-  left: 30px
+  left: 0px
 }
 #buttonBar2 {
   top: 50px;
-  left:30px;
+  left: 0px;
 }
 /*
 #clear_button{
