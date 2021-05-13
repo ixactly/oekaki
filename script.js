@@ -133,7 +133,33 @@ const audio_data_update = (data) => {
 let render_worker = null;
 let video = null;
 
-
+class SaveImgManager {
+  constructor() {
+    this.callbacks = []
+    this.requested = false
+    this.canvasElementForSave = document.getElementsByClassName('output_canvas_for_save')[0];
+  }
+  request(callback) {
+    this.requested = true
+    this.callbacks.push(callback)
+  }
+  do_callback(save_img) {
+    this.canvasElementForSave.getContext('2d').putImageData(save_img, 0, 0)
+    console.log(this.callbacks)
+    while (this.callbacks.length > 0) {
+      let f = this.callbacks.pop()
+      f(this.canvasElementForSave);
+    }
+  }
+  pop_requst_flag() {
+    if (this.requested) {
+      this.requested = false
+      return true
+    }
+    return false
+  }
+}
+let save_img_manager = new SaveImgManager();
 let oekaki_img = null;
 
 //0.5秒ごとにfpsを計算して値を更新する
@@ -169,10 +195,6 @@ class fpsCheck {
   }
 }
 
-let fpsch = new fpsCheck((_fpsch) => {
-  document.getElementById("fps_display").innerHTML = _fpsch.fps.toString() + " fps"
-})
-fpsch.start();
 
 let loop_cnt = 0;
 let render_loop_cnt = 0;
@@ -214,6 +236,9 @@ async function main() {
         canvasCtx.restore();
         landmarker(video);
       }
+      if (!(e.data.save_img == null)) {
+        save_img_manager.do_callback(e.data.save_img);
+      }
     }
 
   } else {
@@ -229,7 +254,6 @@ async function main() {
 const landmarker = async (video) => {
   async function frameLandmarks() {
 
-    fpsch.tick()
     let hands_found;
     const predictions = await model.estimateHands(video);
     if (predictions.length > 0) {
@@ -263,6 +287,7 @@ const landmarker = async (video) => {
       line_thickness: line_thickness,
       line_color: line_color,
       loop_cnt: loop_cnt,
+      save_img_request: save_img_manager.pop_requst_flag(),
       draw: draw//render_loop_cntが過度に遅れてる場合は描画をせずに点の記録に留める
     }
     render_worker.postMessage(render_data);
@@ -306,17 +331,14 @@ async function loadVideo() {
 }
 
 const save_paint = () => {
-
-  if (!(oekaki_img == null)) {
-    canvasElementForSave.getContext('2d').putImageData(oekaki_img, 0, 0)
+  const save_paint_sub = (save_canvas_elem) => {
+    if (save_canvas_elem.toBlob) {
+      save_canvas_elem.toBlob((blob) => {
+        saveAs(blob, "oekaki.png");
+      }, "image/png");
+    }
   }
-
-  if (canvasElementForSave.toBlob) {
-    canvasElementForSave.toBlob((blob) => {
-      saveAs(blob, "oekaki.png");
-    }, "image/png");
-  }
-  canvasElementForSave.getContext('2d').clearRect(0, 0, canvasElement.width, canvasElement.height);
+  save_img_manager.request(save_paint_sub)
 }
 
 document.getElementById("back_button").onclick = () => {
@@ -366,6 +388,63 @@ document.getElementById("clear_button").onclick = () => {
   clear_flag = true;
 }
 
+document.getElementById("upload_button").onclick = () => {
+  console.log("up clicked");
+  const upload_img = (save_canvas_elem) => {
+    console.log("in upload_img");
+    const sendData = save_canvas_elem.toDataURL("image/png");
+    const fullScreen = document.createElement("div");
+    fullScreen.id = "uploadFullscreen";
+    fullScreen.style.cssText = "position: fixed; height: 100%; width: 100%;";
+    fullScreen.innerHTML = `
+      <div id="uploadArea">
+      <h3><ruby><rb>作</rb><rt>つく</rt></ruby>った<ruby><rb>絵</rb><rt>え</rt></ruby>をアップロードしよう！</h3>  
+      <div><ruby><rb>絵</rb><rt>え</rt></ruby>をアップロードするとホームページ<ruby><rb>内</rb><rt>ない</rt></ruby>を<ruby><rb>絵</rb><rt>え</rt></ruby>が<ruby><rb>泳</rb><rt>およ</rt></ruby>ぎます。</div>
+      <div>ほかの人にも<ruby><rb>自分</rb><rt>じぶん</rt></ruby>の<ruby><rb>作品</rb><rt>さくひん</rt></ruby>をじまんしよう！</div>
+        <div><img src=${sendData} height="360px" width="640px" id="imgArea"></div>
+        <div>
+          <input type="text" placeholder="ニックネーム" id="uploadName" size="20">
+          <button id="uploadPost">アップロード</button>
+          <button id="uploadCancel">キャンセル</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(fullScreen);
+    document.getElementById("uploadCancel").onclick = () => {
+      fullScreen.remove();
+    };
+    document.getElementById("uploadPost").addEventListener("click", () => {
+      const nickname = document.getElementById("uploadName").value;
+
+      const url = "http://54.95.100.251:3000/upload";
+      const param = {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ data: sendData, nickname: nickname })
+      };
+      fetch(url, param).then((response) => {
+        if (!response.ok) {
+          console.log('error!');
+        }
+        console.log(response);
+        return response.text();
+      }).then((data) => {
+        const jsonData = JSON.parse(data);
+        alert("アップロードできました！");
+        console.log(`Your Image was saved as ${jsonData["filename"]}`);
+        document.getElementById("uploadFullscreen").remove();
+      }).catch((error) => {
+        alert("アップロードに失敗しました");
+        console.log(`[error] ${error}`);
+      });
+    });
+  }
+  save_img_manager.request(upload_img)
+}
+
 document.getElementById("color").onchange = () => {
   const str = document.getElementById("color").value;
   switch (str) {
@@ -390,7 +469,7 @@ document.getElementById("color").onchange = () => {
     case 'black':
       line_color = [0, 0, 0, 255];
       break;
-      case 'trans':
+    case 'trans':
       line_color = [255, 255, 255, 0];
       break;
   }
@@ -400,9 +479,6 @@ document.getElementById("color").onchange = () => {
 document.getElementById("fullOverlay").onclick = async () => {
   document.getElementById("fullOverlay").remove()
   document.getElementById("help_button").click();
-  await audioCtx.resume()
-  await audio_init()
-  console.log("audio context is resumed")
   // console.log("audio_init() is called")
 }
 
@@ -412,7 +488,7 @@ document.getElementById("help_button").addEventListener("click", () => {
 
   let helpWindow = document.createElement("div");
   helpWindow.style.cssText = "position: absolute; height: 360px; width: 640px; z-index: 10; background-color: gray; opacity: 0.8;";
-  
+
   helpWindow.innerHTML = `
     <h3 style="position: absolute; top: 0%; left: 80%;"><a id="windowCloser" style="text-decoration: underline; cursor: pointer;">×とじる</a></h2>
     <h1 style="position: relative; top: 10%; text-align: center;">おえかきひろばへようこそ！</h1>
@@ -456,9 +532,9 @@ document.getElementById("help_button").addEventListener("click", () => {
   ];
 
   const helpers = document.querySelectorAll(".helpNum");
-  for(let i = 0; i < helpers.length; i++){
+  for (let i = 0; i < helpers.length; i++) {
     helpers[i].addEventListener("click", () => {
-      if(document.getElementById("selectedHelp")) document.getElementById("selectedHelp").removeAttribute("id");
+      if (document.getElementById("selectedHelp")) document.getElementById("selectedHelp").removeAttribute("id");
       document.getElementById("helpContent").innerHTML = helpContents[i];
       helpers[i].id = "selectedHelp";
     });
@@ -471,10 +547,10 @@ document.getElementById("help_button").addEventListener("click", () => {
 
   let currentHelp = 0;
   document.addEventListener("keydown", e => {
-    if(e.key === "ArrowRight" && currentHelp <= 7){
+    if (e.key === "ArrowRight" && currentHelp <= 7) {
       document.getElementsByClassName("helpNum")[++currentHelp].click();
     }
-    if(e.key === "ArrowLeft" && currentHelp >= 1){
+    if (e.key === "ArrowLeft" && currentHelp >= 1) {
       document.getElementsByClassName("helpNum")[--currentHelp].click();
     }
   });
