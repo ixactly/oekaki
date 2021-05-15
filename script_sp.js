@@ -23,8 +23,8 @@ let clear_flag = false
 const sH = window.innerHeight;
 const sW = window.innerWidth;
 
-let VIDEO_HEIGHT = sH;
-let VIDEO_WIDTH = sW;
+let VIDEO_HEIGHT = 500;
+let VIDEO_WIDTH = 500;
 
 function isMobile() {
   const isAndroid = /Android/i.test(navigator.userAgent);
@@ -317,8 +317,8 @@ async function setupCamera() {
       facingMode: 'user',
       // Only setting the video to a specified size in order to accommodate a
       // point cloud, so on mobile devices accept the default size.
-      width: mobile ? undefined : VIDEO_WIDTH,
-      height: mobile ? undefined : VIDEO_HEIGHT
+      width: mobile ? VIDEO_WIDTH : VIDEO_WIDTH,
+      height: mobile ? VIDEO_HEIGHT : VIDEO_HEIGHT
     },
   });
   videoElement.srcObject = stream;
