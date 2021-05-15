@@ -229,7 +229,7 @@ async function main() {
   containerElement.style.height = videoHeight;
 
   if (window.Worker) {
-    render_worker = new Worker("render.js")
+    render_worker = new Worker("render_sp.js")
 
     render_worker.onmessage = (e) => {
       oekaki_img = e.data.img;
