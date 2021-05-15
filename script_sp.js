@@ -23,8 +23,8 @@ let clear_flag = false
 const sH = window.innerHeight;
 const sW = window.innerWidth;
 
-let VIDEO_HEIGHT = sW;
-let VIDEO_WIDTH = sH;
+let VIDEO_HEIGHT = 1000;
+let VIDEO_WIDTH = 1000;
 
 function isMobile() {
   const isAndroid = /Android/i.test(navigator.userAgent);
